@@ -15,8 +15,6 @@ import 'package:provider/provider.dart'; // new
 import 'firebase_options.dart'; // new
 import 'src/authentication.dart'; // new
 import 'src/widgets.dart';
-
-import 'src/widgets.dart';
 import 'main.dart';
 
 class HomePage extends StatelessWidget {

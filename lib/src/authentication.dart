@@ -20,14 +20,14 @@ class AuthFunc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('auth');
+    //print('auth');
     return Row(
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 24, bottom: 8),
           child: StyledButton(
               onPressed: () {
-                print(loggedIn);
+                //print(loggedIn);
                 // !loggedIn ? context.push('/sign-in') : signOut();
                 !loggedIn
                     ? Navigator.pushNamed(context, '/sign-in')
@@ -42,7 +42,7 @@ class AuthFunc extends StatelessWidget {
               child: StyledButton(
                   onPressed: () {
                     // context.push('/profile');
-                    print(FirebaseAuth.instance.currentUser);
+                    // print(FirebaseAuth.instance.currentUser);
                     Navigator.pushNamed(context, '/profile');
                   },
                   child: const Text('Profile')),

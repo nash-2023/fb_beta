@@ -129,6 +129,7 @@ class ApplicationState extends ChangeNotifier {
   Attending _attending = Attending.unknown;
   Attending get attending => _attending;
   set attending(Attending attending) {
+    // print('setter triggered');
     final userDoc = FirebaseFirestore.instance
         .collection('attendees')
         .doc(FirebaseAuth.instance.currentUser!.uid);
@@ -137,6 +138,24 @@ class ApplicationState extends ChangeNotifier {
     } else {
       userDoc.set(<String, dynamic>{'attending': false});
     }
+    //(doc(uid)exist)? Override : create => field (attendees)
+    //, SetOptions(merge: true)
+    //.then((v) => print('yes'))
+    //.catchError((e) => print(e));
+  }
+
+  FutureOr<void> trans() async {
+    final userDoc = FirebaseFirestore.instance
+        .collection('attendees')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot dsnpsht = await transaction.get(userDoc);
+      if (dsnpsht.exists) {
+        print('exist');
+      } else {
+        print('not exist');
+      }
+    });
   }
 
   Future<void> init() async {
@@ -146,7 +165,6 @@ class ApplicationState extends ChangeNotifier {
       EmailAuthProvider(),
     ]);
     // Add from here...
-
     FirebaseFirestore.instance
         .collection('attendees')
         .where('attending', isEqualTo: true)
@@ -155,7 +173,6 @@ class ApplicationState extends ChangeNotifier {
       _attendees = snapshot.docs.length;
       notifyListeners();
     });
-
     // ...to here.
 
     FirebaseAuth.instance.userChanges().listen((user) {
@@ -184,24 +201,25 @@ class ApplicationState extends ChangeNotifier {
             .snapshots()
             .listen((snapshot) {
           if (snapshot.data() != null) {
+            // print('listen triggered');
             if (snapshot.data()!['attending'] as bool) {
               _attending = Attending.yes;
             } else {
               _attending = Attending.no;
             }
           } else {
+            // print('is null');
             _attending = Attending.unknown;
           }
+          // print("notify listenners on _attending");
           notifyListeners();
         });
         // ...to here.
-
       } else {
         _loggedIn = false;
         _guestBookMessages = [];
         _guestBookSubscription?.cancel();
         _attendingSubscription?.cancel(); // new
-
       }
       notifyListeners();
     });
